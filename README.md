@@ -1,7 +1,5 @@
 # 💰 Gagyebu, 가계부
 > 나의 재정 상태를 보기 쉬운 ui로 전체적인 통계를 내릴 수 있는 앱 입니다. 
-> test
-
 
 
 <br/>
@@ -14,7 +12,7 @@
 
 <br/><br/>
 
-## 📌 [@eunjjungg](https://github.com/eunjjungg) : Native 기술 스택
+## 📌 [@HyunJoon Choi](https://github.com/H-Zoon) : Native 기술 스택
 
 - Android Studio, Kotlin
 - MVVM
@@ -27,77 +25,112 @@
 
 <br/><br/>
 
-## 💻 [@eunjjungg](https://github.com/eunjjungg) : Native 담당 부분
+## 💻 [@HyunJoon Choi](https://github.com/H-Zoon) : Native 담당 부분
 
 - 프로젝트 세팅
-- 맡은 구현 화면 디자인
-- 연간 통계 관련 로직
-- 월간 통계 관련 로직
-- 월간 상세 소비 내역 관련 로직
+- 메인 화면 레이아웃 구성
+- 사용자의 데이터 변화에 대한 반응형 로직 구현
+- 사용자가 추가한 데이터 필터링 로직 구현 (날짜별, 소비유형)
+- 데이터 구조 
+<br/><br/>
+
+## 🌱 [@HyunJoon Choi](https://github.com/H-Zoon) : 구현 화면 및 구조
+
+
+<img width="892" alt="스크린샷 2023-05-01 오후 8 59 12" src="https://user-images.githubusercontent.com/43941511/235448800-3ec39cd9-2429-4343-a24f-62cb1c2c8f6d.png">
+
+
+## 🙋‍♀️ 메인 화면 - 아이템 노출, 수정, 삭제
+
+https://user-images.githubusercontent.com/43941511/235449716-33b6668b-29e2-42cc-8265-1ec04f7c38c6.mp4
+
+
+- 데이터가 포함된 날짜, 필터링, 총액, 수입과 지출금액, 소비 세부정보를 볼 수 있는 메인 화면
+- 상세 데이터를 왼쪽으로 스와이프 하여 데이터 삭제기능 구현
+- 데이터를 삭제한 후 스넥바를 통해 삭제 완료를 노출하고 3초 이내 데이터 복구 기능 구현
+- 상세 데이터를 오른쪽으로 스와이프 하여 데이터 수정기능 구현
+
+
+### 🙋‍♀️ 구현 방법
+<img width="971" alt="스크린샷 2023-05-01 오후 8 45 48" src="https://user-images.githubusercontent.com/43941511/235447449-28af1a80-d7e1-44b0-a784-0b6452ab93e0.png">
+
+### 데이터 관리
+- 사용자의 이밴트를 받아 실시간으로 메인 화면의 각 요소를 변경할 수 있도록 설계
+
+### Room Database
+- 사용자의 가계부 항목 (수입/지출여부, 제목, 금액, 카테고리) 은 Android Room Database를 통해 저장.
+- 각 항목의 필요한 쿼리는 Repository에서 명세하여 사용.
+
+#### Repository 예제
+
+```kotlin
+    
+    //필터링 없음 + 금액, 일자 사용자 입력에 따라 정렬
+    @Query("SELECT * FROM ItemEntity WHERE year= :year AND month = :month ORDER BY "+
+            "CASE :order WHEN 'day' THEN day END DESC," +
+            "CASE :order WHEN 'amount' THEN amount END DESC")
+    fun sortDay(year: Int, month: Int, order: String) : Flow<List<ItemEntity>>
+
+    //수입 필터링 + 월/금액정렬
+    @Query("SELECT * FROM ItemEntity WHERE category = '수입' AND year= :year AND month = :month ORDER BY "+
+            "CASE :order WHEN 'day' THEN day END DESC," +
+            "CASE :order WHEN 'amount' THEN amount END DESC")
+    fun sortInIncome(year: Int, month: Int, order: String) : Flow<List<ItemEntity>>
+
+    //지출 필터링 + 월/금액정렬
+    @Query("SELECT * FROM ItemEntity WHERE NOT category = '수입' AND year= :year AND month = :month ORDER BY "+
+            "CASE :order WHEN 'day' THEN day END DESC," +
+            "CASE :order WHEN 'amount' THEN amount END DESC")
+    fun sortInSpend(year: Int, month: Int, order: String) : Flow<List<ItemEntity>>
+
+```
+
+- 사용자 데이터는 FlowData로 반환받고 DomainLayer에서 수집. LiveData로 변환하도록 구현
+
+```kotlin
+
+    //사용자 item
+    val itemFlow: LiveData<List<ItemEntity>> = itemGetOption.flatMapLatest {
+        itemRepository.itemGet(it)
+    }.asLiveData()
+
+```
+
+## Compose (MainUI)
+ - 도메인 레이아웃의 데이터 변화를 감지하여 Compose의 LazyColumn 값을 초기화 하도록 구현
+
+```kotlin
+
+val itemValue by MainViewModel.itemFlow.observeAsState()
+
+...
+
+ itemValue?.let { it ->
+                ItemList(it, listState = listState,
+                    DismissDelete = {
+                        ItemRepo.deleteItem(it.id)
+                    },
+                    DismissUpdate = 
+                        val updateData = UpdateDate(
+                            id = it.id,
+                            date = "${it.year}-${it.month}-${it.day}",
+                            title = it.title,
+                            amount = it.amount,
+                            category = it.category
+                        )
+
+```
+
+
+### 🙋‍♀️ 메인 화면 - 항목 필터링
+
+https://user-images.githubusercontent.com/43941511/235449805-a4460b9a-d0f6-4994-a848-2061be3bb1cb.mp4
+
+- 사용자의 가계내역 (전체, 수입, 지출)과 정렬방식(금액, 날짜)을 입력받아 해당 내용으로 필터링 할 수 있도록 구현
+- 해당 데이터는 어플리케이션이 종료되고 다시 실행되어도 저장될 수 있도록 Android DataStore를 이용하여 구현 
+
+## DataStore - 항목 필터링 정보 저장
 
 
 <br/><br/>
-
-## 🌱 [@eunjjungg](https://github.com/eunjjungg) : 구현 화면 및 설명
-
-### 🙋‍♀️ 연간 통계
-https://user-images.githubusercontent.com/100047095/230774726-b533c998-eef9-4c7d-9d84-62e019f5f909.mp4
-
-- 막대 그래프가 그려지는 모습은 애니메이션으로 구현
-- Local DB(Room)에서 데이터를 불러와 해당 수치로 그래프 그림
-- 하단 리포트의 각 사각 컴포넌트들은 xml 없이 코드로 작성한 Custom View 사용
-
-<br/>
-
-### 🙋‍♀️ 월간 통계
-https://user-images.githubusercontent.com/100047095/230774889-b2b92ffa-3254-40ab-ad16-c8e5373b0afe.mp4
-
-- XML로 구현한 파이 차트
-- Local DB(Room)에서 데이터를 불러와 해당 수치로 그래프 그림
-- 파이 차트가 그려지는 모습은 애니메이션으로 구현
-
-<br/>
-
-### 🙋‍♀️ 월간 상세 리포트
-https://user-images.githubusercontent.com/100047095/230774899-295777fc-2491-44d7-863e-509644954c8a.mp4
-
-- 각 `fragment` 모두 같은 `viewmodel` 사용하도록 구현
-- 마지막 다음으로 넘어가기 버튼 클릭 시 회원가입 절차 완료되고 서버로 가입 요청하도록 구현
-- 가입 도중 끊긴다면 카카오 로그인에서 회원 삭제하도록 구현
-
-
-
-<br/><br/>
-
-## 🔫 **Trouble Shooting**
-
-```
-1️⃣ 이슈 관리
-```
-Gagyebu를 개발하기 이전에 진행했던 프로젝트는 네이티브 팀원이 저 혼자였거나 이슈 관리에 대한 지식 없이 진행했었습니다. 
-하지만 Gagyebu 프로젝트는 협업자와의 커뮤니케이션이 중요하다고 느끼게 되었고 이를 해결하기 위해 Jira를 통한 이슈 관리를 진행했습니다. 
-이 방법을 사용하며 느낀점은 상대방이 현재 무엇을 진행중인지 확실히 알 수 있는 것도 장점이지만 내 개발 현황이 어떤지 또한 파악할 수 있다는 점이 저에게는 크게 와닿았습니다. 
-그리고 이슈 관리를 하며 가장 크게 배운 점은 스프린트 단위였던 한 주 단위로 스크럼을 진행하며 특정 기능을 구현하기 위해 
-**내가 얼마만큼의 시간이 필요할지 예측하고 회고하는 습관**을 갖게 되었습니다.
-
-
-
-```
-2️⃣ 애니메이션
-```
-주어진 수치에 맞춰 뷰를 그리는 것은 이전에도 해봤던 경험이 있지만 뷰를 그리는 과정을 애니메이션으로 표현하는 것은 Gagyebu를 진행하며 처음 해봤던 과정이었습니다. 저는 주어진 수치에 맞춰 **파이 그래프**를 그리는 과정을 수행했습니다. 이 과정에서 애니메이션이라는 것을 처음 접해보았고 각 수치에 맞춰 보정을 해주는 것이 쉽지는 않았지만 실제로 그려지는 모습을 보니 유저 입장에서 애니메이션이 있는 편이 그래프를 이해하는데 도움을 준다는 것을 알게 되었습니다. 또한 수치 보정을 꼼꼼히 해주어 원하던 대로 동작하는 애니메이션을 볼 때  느낄 수 있었습니다.
-
-
-
-```
-3️⃣ Compose에서의 event handling
-```
-저는 Jetpack Compose UI를 이번 프로젝트를 통해 처음 사용해보았습니다. 이전에 google에서 진행한 ComposeCamp2022는 수료했지만 실제로 프로젝트에 사용해 본 것은 처음이었습니다. Compose에서 중요하게 생각하는 개념인 `state hoisting` 또한 처음 접하는 주제라 상태가 변했을 때 이벤트 핸들링을 어디서 해주어야 옳을지 많은 고민을 해보았습니다.
-
-
-
-```
-4️⃣ Refactoring
-```
-늘 제 코드의 부족함을 어느정도 인지하고 있고 프로젝트가 끝날 때 즈음 아쉬운 부분에 대해 기록은 해두었지만 실제로 refactoring 과정을 수행해본적은 없었습니다. 하지만 Gagyebu 프로젝트를 1차 구현 완료했을 때 `coroutine`을 잘못 사용하고 있는 부분을 발견했고 원형 그래프를 compose로도 구현해보고 싶어 migration하는 refactoring 과정을 진행했습니다. compose로 migration하는 과정에서는 compose에 대한 이해도를 조금 더 높일 수 있는 좋은 기회가 되었지만 저는 `coroutine`을 리팩토링 하면서 가장 크게 배울 수 있었습니다. 제가 이전까지 작성했던 코드는 `coroutine`의 비동기성을 제대로 활용하지 못하고 있었고 이를 고치며 `coroutine`에 대한 이해도 또한 높일 수 있었습니다. 물론 제가 고친 후의 코드도 현업에 계신 junior, senior 개발자 분들이 보셨을 때 부족함이 많은 코드이겠지만 이 과정을 계속 거친다면 저는 더 좋은 코드를 작성할 수 있을 것이라고 생각합니다.
 
