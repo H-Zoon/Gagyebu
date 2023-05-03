@@ -1,7 +1,13 @@
 # 💰 Gagyebu, 가계부
-> 나의 재정 상태를 보기 쉬운 ui로 전체적인 통계를 내릴 수 있는 앱 입니다. 
+> 나의 재정 상태를 보기 쉬운 ui로 전체적인 통계를 내릴 수 있는 앱 입니다.
 
+## 프로젝트 기간
+> November 16, 2022 ~ December 20, 2022
 
+## 제작 동기
+> 2022년 ICT 인턴쉽중 진행한 프로젝트 입니다.
+> ...
+> 
 <br/>
 
 ## 🧞‍♀️ 프로젝트 참여자
@@ -12,7 +18,8 @@
 
 <br/><br/>
 
-## 📌 [@HyunJoon Choi](https://github.com/H-Zoon) : Native 기술 스택
+## 📌 [@HyunJoon Choi](https://github.com/H-Zoon) : 사용 기술
+
 
 - Android Studio, Kotlin
 - MVVM
@@ -20,7 +27,6 @@
 - Android Jetpack (Compose UI, Android KTX)
 - Custom View
 - Room
-- Dark Mode Theme
 - 협업 - Jira, Gitflow, Bitbucket, Confluence, Figma
 
 <br/><br/>
