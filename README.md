@@ -1,4 +1,6 @@
 # 💰 Gagyebu, 가계부
+![프로젝트 발표자료 001](https://github.com/H-Zoon/Gagyebu/assets/43941511/d522a326-e053-400b-9e24-814e2e736064)
+
 > 나의 재정 상태를 보기 쉬운 ui로 전체적인 통계를 내릴 수 있는 앱 입니다.
 
 ## 프로젝트 기간
@@ -41,11 +43,13 @@
 
 ## MainActivity **Layout structure**
 
-<img width="892" alt="스크린샷 2023-05-01 오후 8 59 12" src="[https://user-images.githubusercontent.com/43941511/235448800-3ec39cd9-2429-4343-a24f-62cb1c2c8f6d.png](https://user-images.githubusercontent.com/43941511/235448800-3ec39cd9-2429-4343-a24f-62cb1c2c8f6d.png)">
+![Untitled](https://github.com/H-Zoon/Gagyebu/assets/43941511/6f5328b9-781e-47e9-9244-f4a49306738c)
 
 ## MainActivity DataFlow
 
-<img width="971" alt="스크린샷 2023-05-01 오후 8 45 48" src="[https://user-images.githubusercontent.com/43941511/235447449-28af1a80-d7e1-44b0-a784-0b6452ab93e0.png](https://user-images.githubusercontent.com/43941511/235447449-28af1a80-d7e1-44b0-a784-0b6452ab93e0.png)">
+<img width="1068" alt="스크린샷 2023-05-22 오후 4 18 16" src="https://github.com/H-Zoon/Gagyebu/assets/43941511/8b184a5a-f2d9-4d1a-a477-308791096173">
+
+
 
 # Application Function 1 - DataControl
 
@@ -199,7 +203,12 @@ class OptionState(private val context: Context) {
 
 ## ProduceActivity **Layout structure**
 
+<img width="421" alt="스크린샷 2023-05-22 오후 4 22 39" src="https://github.com/H-Zoon/Gagyebu/assets/43941511/f02a8551-c566-40ae-b05c-8630f046c590">
+
 ## ProduceActivity DataFlow
+
+<img width="1081" alt="스크린샷 2023-05-22 오후 4 21 34" src="https://github.com/H-Zoon/Gagyebu/assets/43941511/cc04027d-1eec-4cb6-a652-09f037ed2bd2">
+
 
 ## Application Function 3 - item input
 
@@ -210,3 +219,10 @@ class OptionState(private val context: Context) {
 - 데이터가 올바른 데이터인지
 - 저장이 성공/실패했는지
 - 사용자가 모든 데이터를 입력했는지 (버튼을 활성화 해도 괜찮은지)
+
+
+# Application Function 4 - StateFlow
+
+<img width="1088" alt="스크린샷 2023-05-22 오후 4 23 58" src="https://github.com/H-Zoon/Gagyebu/assets/43941511/a2d63c3a-2f18-4350-9bd8-28d5c8a92a7c">
+
+        }
