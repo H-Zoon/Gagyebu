@@ -224,5 +224,3 @@ class OptionState(private val context: Context) {
 # Application Function 4 - StateFlow
 
 <img width="1088" alt="스크린샷 2023-05-22 오후 4 23 58" src="https://github.com/H-Zoon/Gagyebu/assets/43941511/a2d63c3a-2f18-4350-9bd8-28d5c8a92a7c">
-
-        }
